@@ -1,0 +1,47 @@
+version: '3.3'
+services:
+
+  #############################################################################
+  #
+  # Backend
+  #
+  #############################################################################
+
+  # Unit tests
+  tests:
+    image: case-study:latest
+    build:
+      args:
+        dev: "true"
+      context: .
+    environment:
+      DJANGO_SETTINGS_MODULE: case_study.settings
+    command: "sh -c \"pytest\""
+    volumes:
+      - .:/app/case_study
+
+  # Linting
+  lint:
+    image: case-study:latest
+    build:
+      args:
+        dev: "true"
+      context: .
+    command: "sh -c \"black .\""
+    volumes:
+      - .:/app/case_study
+
+  # Dev server
+  dev:
+    image: case-study:latest
+    build:
+      args:
+        dev: "false"
+      context: .
+    environment:
+      DJANGO_SETTINGS_MODULE: case_study.settings
+    ports:
+      - "8000:8000"
+    command: "python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app/case_study
